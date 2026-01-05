@@ -1,4 +1,4 @@
-# -SharePoint-2019-to-SharePoint-Online-Migration-with-ALM
+# SharePoint-2019-to-SharePoint-Online-Migration-with-ALM
 
 # SharePoint Online Migration Project — Impact Case Study
 
@@ -55,9 +55,7 @@ This repository highlights my contributions to a large-scale SharePoint Online m
 ![Migration Workflow](Screenshots/photo_2026-01-05_15-32-06.jpg)
 ### Migration Plan Overview
 ![Migration Workflow](Screenshots/migration_workflow.png)
-(Screenshots/photo_2026-01-05_15-31-18.jpg)
-**Documentation Template:**  
-![Documentation Template]()
+
 
 > *Note: All screenshots have been redacted to remove confidential information.*
 
@@ -70,5 +68,5 @@ This repository highlights my contributions to a large-scale SharePoint Online m
 
 ---
 
-## Repository Structure
+
 
