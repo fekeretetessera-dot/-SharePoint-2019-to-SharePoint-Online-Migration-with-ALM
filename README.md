@@ -4,46 +4,127 @@ This project demonstrates migrating SharePoint 2019 content to SharePoint Online
 
 ---
 
-## **Phases of Migration**
+<#
+.SYNOPSIS
+Pre-Migration Discovery & Assessment for SharePoint Migration
 
-1. **Pre-Migration Analysis**  
-   - Assess existing SharePoint 2019 content, customizations, workflows, and dependencies  
-   - Identify risks, size of data, and content types  
+.DESCRIPTION
+Performs inventory and risk analysis of SharePoint 2016/2019 environments.
+Outputs reports used to define migration scope, approach, and ALM planning.
 
-2. **Migration Approach**  
-   - Define phased migration strategy: Dev → UAT → Production  
-   - Determine migration tools, scope, and rollback plan  
+ALM Principles:
+- Environment awareness
+- Read-only discovery
+- Repeatable and auditable outputs
+- Separation of analysis from execution
+#>
 
-3. **Documentation / Migration Plan**  
-   - Map out timelines, milestones, and success criteria  
-   - Include risk mitigation, logging, and governance standards  
+# ==============================
+# ALM: Environment Declaration
+# ==============================
+$Environment = "Assessment"
+$RunDate = Get-Date -Format "yyyy-MM-dd_HHmm"
 
-4. **Future State Design**  
-   - Target SPO architecture including site collections, libraries, lists, and metadata  
-   - Align with ALM and enterprise governance  
+Write-Host "Starting Pre-Migration Discovery | Environment: $Environment" -ForegroundColor Cyan
 
-5. **Environment Preparation**  
-   - Configure Dev/UAT/Prod environments  
-   - Apply security baseline and governance policies  
+# ==============================
+# Source Configuration
+# ==============================
+$SourceWebApp = "https://sp2016.contoso.com"
+$OutputPath = ".\DiscoveryReports\$RunDate"
 
-6. **Permissions & Data Mapping Strategies**  
-   - Map source permissions to SPO  
-   - Determine when to apply mapping (pre/post migration)  
+New-Item -ItemType Directory -Path $OutputPath -Force | Out-Null
 
-7. **Migration Team & Roles**  
-   - Assign responsibilities: admin, content owners, QA testers  
-   - Ensure clear communication plan  
+# ==============================
+# Discovery Thresholds
+# ==============================
+$LargeListThreshold = 5000
+$InactiveDaysThreshold = 180
 
-8. **UAT (User Acceptance Testing)**  
-   - Validate migrated content, workflows, and permissions  
-   - Test automated scripts and ShareGate outputs  
+# ==============================
+# Inventory Containers
+# ==============================
+$SiteInventory = @()
+$PermissionFindings = @()
+$RiskFindings = @()
 
-9. **Go-Live**  
-   - Final migration to production  
-   - Post-migration verification, user support, and audit logs  
+# ==============================
+# 1. Site & Content Inventory
+# ==============================
+Write-Host "Collecting Site Inventory..." -ForegroundColor Yellow
 
----
+# (ShareGate or SP Management Shell would be used here)
+# Placeholder logic for portfolio demonstration
 
+$Sites = @(
+    @{ Url="https://sp2016.contoso.com/sites/Claims"; LastModified=(Get-Date).AddDays(-30); Owner="Claims Admin" },
+    @{ Url="https://sp2016.contoso.com/sites/OldProjects"; LastModified=(Get-Date).AddDays(-400); Owner="Unknown" }
+)
 
----
+foreach ($site in $Sites) {
+
+    $Inactive = ((Get-Date) - $site.LastModified).Days -gt $InactiveDaysThreshold
+
+    $SiteInventory += [PSCustomObject]@{
+        SiteUrl        = $site.Url
+        Owner          = $site.Owner
+        LastModified   = $site.LastModified
+        InactiveSite   = $Inactive
+        MigrationScope = if ($Inactive) { "Leave Behind / Archive" } else { "Migrate" }
+    }
+}
+
+# ==============================
+# 2. Permission & Security Analysis
+# ==============================
+Write-Host "Analyzing Permissions..." -ForegroundColor Yellow
+
+$PermissionFindings += [PSCustomObject]@{
+    SiteUrl        = "https://sp2016.contoso.com/sites/Claims"
+    IssueType      = "Direct User Assignment"
+    RiskLevel      = "High"
+    Recommendation = "Replace with Azure AD Security Group"
+}
+
+$PermissionFindings += [PSCustomObject]@{
+    SiteUrl        = "https://sp2016.contoso.com/sites/OldProjects"
+    IssueType      = "Orphaned User"
+    RiskLevel      = "Medium"
+    Recommendation = "Remove or map to group"
+}
+
+# ==============================
+# 3. Large List & Performance Risk
+# ==============================
+Write-Host "Identifying Performance Risks..." -ForegroundColor Yellow
+
+$RiskFindings += [PSCustomObject]@{
+    SiteUrl        = "https://sp2016.contoso.com/sites/Claims"
+    RiskCategory   = "Large List"
+    Details        = "List exceeds 5,000 items"
+    Impact         = "Migration throttling / SPO limits"
+    Recommendation = "Filter, archive, or split list"
+}
+
+# ==============================
+# 4. Modernization Candidates
+# ==============================
+Write-Host "Identifying Modernization Opportunities..." -ForegroundColor Yellow
+
+$RiskFindings += [PSCustomObject]@{
+    SiteUrl        = "https://sp2016.contoso.com/sites/Claims"
+    RiskCategory   = "Legacy Customization"
+    Details        = "InfoPath form detected"
+    Recommendation = "Rebuild using Power Apps"
+}
+
+# ==============================
+# Export Reports
+# ==============================
+$SiteInventory | Export-Csv "$OutputPath\SiteInventory.csv" -NoTypeInformation
+$PermissionFindings | Export-Csv "$OutputPath\PermissionFindings.csv" -NoTypeInformation
+$RiskFindings | Export-Csv "$OutputPath\MigrationRisks.csv" -NoTypeInformation
+
+Write-Host "Discovery Completed Successfully" -ForegroundColor Green
+Write-Host "Reports generated in: $OutputPath" -ForegroundColor Cyan
 
