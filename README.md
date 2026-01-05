@@ -42,13 +42,13 @@ This repository highlights my contributions to a large-scale SharePoint Online m
 ## Screenshots and Documentation
 
 **Migration Plan Overview:**  
-![Migration Workflow](Screenshots/migration_workflow.png)
+![Migration Workflow]()
 
 **Sample User Guide:**  
-![User Guide Example](Screenshots/user_guide_example.png)
+![User Guide Example]()
 
 **Documentation Template:**  
-![Documentation Template](Screenshots/documentation_template.png)
+![Documentation Template]()
 
 > *Note: All screenshots have been redacted to remove confidential information.*
 
